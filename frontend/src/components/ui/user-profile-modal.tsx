@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { User, Camera, X } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -10,13 +10,41 @@ interface UserProfileModalProps {
   onClose: () => void
 }
 
+// Simple encryption/decryption functions
+const encryptData = (data: string): string => {
+  return btoa(data) // Base64 encoding for basic protection
+}
+
+const decryptData = (encryptedData: string): string => {
+  try {
+    return atob(encryptedData) // Base64 decoding
+  } catch {
+    return ''
+  }
+}
+
 export function UserProfileModal({ isOpen, onClose }: UserProfileModalProps) {
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [userInfo, setUserInfo] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phone: "+1 234 567 8900"
+    name: "",
+    email: "",
+    phone: ""
   })
+
+  // Load saved data on component mount
+  useEffect(() => {
+    const savedData = localStorage.getItem('userProfile')
+    if (savedData) {
+      try {
+        const decryptedData = decryptData(savedData)
+        const parsedData = JSON.parse(decryptedData)
+        setUserInfo(parsedData.userInfo || { name: "", email: "", phone: "" })
+        setProfileImage(parsedData.profileImage || null)
+      } catch (error) {
+        console.error('Error loading profile data:', error)
+      }
+    }
+  }, [])
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -31,6 +59,20 @@ export function UserProfileModal({ isOpen, onClose }: UserProfileModalProps) {
 
   const handleInputChange = (field: string, value: string) => {
     setUserInfo(prev => ({ ...prev, [field]: value }))
+  }
+
+  const saveProfile = () => {
+    try {
+      const dataToSave = {
+        userInfo,
+        profileImage
+      }
+      const encryptedData = encryptData(JSON.stringify(dataToSave))
+      localStorage.setItem('userProfile', encryptedData)
+      onClose()
+    } catch (error) {
+      console.error('Error saving profile data:', error)
+    }
   }
 
   return (
@@ -110,7 +152,7 @@ export function UserProfileModal({ isOpen, onClose }: UserProfileModalProps) {
             <Button variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button className="bg-teal-600 hover:bg-teal-700">
+            <Button onClick={saveProfile} className="bg-teal-600 hover:bg-teal-700">
               Save Changes
             </Button>
           </div>
