@@ -11,9 +11,16 @@ import { ActivityChart } from '@/pages/admin/ActivityChart';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const { data: users = [], isLoading } = useUsers();
-  const { data: products = [] } = useProducts();
+  const { data: users = [], isLoading: usersLoading } = useUsers();
+  const { data: products = [], isLoading: productsLoading } = useProducts();
   const newPosts = usePostStore((s) => s.newPosts);
+
+  // Debug: Log products data
+  React.useEffect(() => {
+    if (products.length > 0) {
+      console.log('🛍️ Products from API:', products.length, products);
+    }
+  }, [products]);
 
   
   // placing newly-added users first and avoiding duplicates by id.
@@ -96,7 +103,7 @@ export default function AdminDashboard() {
             <div>
               <p className="text-slate-600 text-sm font-medium">Total Users</p>
               <p className="text-3xl font-bold text-slate-800 mt-1">
-                {isLoading ? '...' : combinedUsers.length}
+                {usersLoading ? '...' : combinedUsers.length}
               </p>
               <p className="text-green-600 text-sm mt-1 flex items-center">
                 <TrendingUp className="w-3 h-3 mr-1" />
@@ -113,10 +120,12 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-600 text-sm font-medium">Products</p>
-              <p className="text-3xl font-bold text-slate-800 mt-1">{products.length}</p>
+              <p className="text-3xl font-bold text-slate-800 mt-1">
+                {productsLoading ? '...' : products.length}
+              </p>
               <p className="text-green-600 text-sm mt-1 flex items-center">
                 <TrendingUp className="w-3 h-3 mr-1" />
-                +8%
+                API Data
               </p>
             </div>
             <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-lg">

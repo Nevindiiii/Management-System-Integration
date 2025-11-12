@@ -12,7 +12,7 @@ import {
   SidebarMenuItem,
   SidebarHeader,
   SidebarFooter,
-  useSidebar,
+  
 } from "@/components/ui/sidebar"
 import { UserProfileModal } from "@/components/ui/user-profile-modal"
 
