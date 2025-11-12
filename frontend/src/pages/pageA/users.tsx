@@ -91,27 +91,40 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
   }
 
   return (
-    <div>
-      <h2 className="mb-4 text-2xl font-bold">Users</h2>
+    <div className="space-y-6 animate-fade-in">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-slate-800">Users</h2>
+          <p className="text-slate-600 mt-1">Manage and view all user accounts</p>
+        </div>
+      </div>
 
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/20">
         <Input
-          placeholder="Filter names..."
+          placeholder="Search users by name..."
           value={(getColumn('firstName')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             getColumn('firstName')?.setFilterValue?.(event.target.value)
           }
-          className="mb-4 max-w-sm"
+          className="max-w-sm bg-white/80 border-slate-200 focus:border-blue-500"
         />
 
-        <div className="flex gap-5">
+        <div className="flex gap-3">
           <TableColumnsDropdown table={table} />
 
           <Button 
             onClick={() => setAddOpen(true)}
             disabled={createUserMutation.isPending}
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-200"
           >
-            {createUserMutation.isPending ? 'Adding...' : 'Add Data'}
+            {createUserMutation.isPending ? (
+              <div className="flex items-center">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                Adding...
+              </div>
+            ) : (
+              'Add User'
+            )}
           </Button>
         </div>
       </div>
@@ -138,13 +151,13 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
         onTableChange={setTable}
       />
 
-      <div className="flex items-center justify-between py-4">
-        <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
+      <div className="flex items-center justify-between py-6 bg-white/50 backdrop-blur-sm rounded-xl px-4 border border-white/20 mt-6">
+        <div className="flex items-center space-x-3">
+          <p className="text-sm font-medium text-slate-700">Rows per page</p>
           <RowsPerPageSelect
             value={`${table?.pageSize ?? 10}`}
             onValueChange={(value) => table?.setPageSize?.(Number(value))}
-            className="h-8 w-[70px]"
+            className="h-9 w-[80px] bg-white border-slate-200"
           />
         </div>
 

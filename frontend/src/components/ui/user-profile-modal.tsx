@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { User, Camera, X } from "lucide-react"
+import { User, Camera } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,12 +12,12 @@ interface UserProfileModalProps {
 
 // Simple encryption/decryption functions
 const encryptData = (data: string): string => {
-  return btoa(data) // Base64 encoding for basic protection
+  return btoa(data) 
 }
 
 const decryptData = (encryptedData: string): string => {
   try {
-    return atob(encryptedData) // Base64 decoding
+    return atob(encryptedData) 
   } catch {
     return ''
   }
@@ -113,6 +113,7 @@ export function UserProfileModal({ isOpen, onClose }: UserProfileModalProps) {
                 accept="image/*"
                 onChange={handleImageUpload}
                 className="hidden"
+                aria-label="Upload profile image"
               />
             </div>
           </div>

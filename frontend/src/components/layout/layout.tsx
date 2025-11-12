@@ -24,7 +24,7 @@ const MainContent = ({ children }: { children: ReactNode }) => {
       }}
     >
       <LayoutHeader />
-      <main className="min-h-screen p-6">
+      <main className="min-h-screen bg-gradient-to-br from-slate-50/50 via-blue-50/30 to-indigo-50/20 p-6">
         <div className="w-full max-w-full overflow-x-auto">{children}</div>
       </main>
     </SidebarInset>

@@ -140,24 +140,29 @@ function signup({ onRegister }: SignupProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-6">
-      <div className="w-full max-w-120">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center p-6 animate-fade-in">
+      <div className="w-full max-w-md">
         {/* Register Form Card */}
-        <div className="bg-white rounded-3xl shadow-xl p-8">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 p-8 animate-slide-up">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Sign Up</h1>
-            <p className="text-gray-500 text-sm">Please sign up to continue</p>
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                <div className="w-4 h-4 bg-blue-500 rounded-sm"></div>
+              </div>
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
+            <p className="text-gray-600 text-sm">Join us today and get started</p>
           </div>
 
           {/* Register Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name Input */}
             <div className="relative">
-              <div className={`flex items-center bg-gray-50 rounded-2xl px-4 py-4 border transition-all ${
+              <div className={`flex items-center bg-white/50 rounded-xl px-4 py-4 border transition-all duration-200 ${
                 errors.name 
-                  ? 'border-red-500 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100' 
-                  : 'border-gray-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100'
+                  ? 'border-red-300 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100 bg-red-50/50' 
+                  : 'border-gray-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 hover:border-gray-300'
               }`}>
                 <User className="w-5 h-5 text-gray-400 mr-3" />
                 <input
@@ -179,10 +184,10 @@ function signup({ onRegister }: SignupProps) {
 
             {/* Email Input */}
             <div className="relative">
-              <div className={`flex items-center bg-gray-50 rounded-2xl px-4 py-4 border transition-all ${
+              <div className={`flex items-center bg-white/50 rounded-xl px-4 py-4 border transition-all duration-200 ${
                 errors.email 
-                  ? 'border-red-500 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100' 
-                  : 'border-gray-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100'
+                  ? 'border-red-300 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100 bg-red-50/50' 
+                  : 'border-gray-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 hover:border-gray-300'
               }`}>
                 <Mail className="w-5 h-5 text-gray-400 mr-3" />
                 <input
@@ -204,10 +209,10 @@ function signup({ onRegister }: SignupProps) {
 
             {/* Password Input */}
             <div className="relative">
-              <div className={`flex items-center bg-gray-50 rounded-2xl px-4 py-4 border transition-all ${
+              <div className={`flex items-center bg-white/50 rounded-xl px-4 py-4 border transition-all duration-200 ${
                 errors.password 
-                  ? 'border-red-500 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100' 
-                  : 'border-gray-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100'
+                  ? 'border-red-300 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100 bg-red-50/50' 
+                  : 'border-gray-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 hover:border-gray-300'
               }`}>
                 <Lock className="w-5 h-5 text-gray-400 mr-3" />
                 <input
@@ -229,10 +234,10 @@ function signup({ onRegister }: SignupProps) {
 
             {/* Confirm Password Input */}
             <div className="relative">
-              <div className={`flex items-center bg-gray-50 rounded-2xl px-4 py-4 border transition-all ${
+              <div className={`flex items-center bg-white/50 rounded-xl px-4 py-4 border transition-all duration-200 ${
                 errors.confirmPassword 
-                  ? 'border-red-500 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100' 
-                  : 'border-gray-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100'
+                  ? 'border-red-300 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100 bg-red-50/50' 
+                  : 'border-gray-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 hover:border-gray-300'
               }`}>
                 <Lock className="w-5 h-5 text-gray-400 mr-3" />
                 <input
@@ -266,9 +271,16 @@ function signup({ onRegister }: SignupProps) {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-blue-500 text-white font-semibold py-4 rounded-2xl hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-4 rounded-xl hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
-              {isLoading ? 'Please wait...' : 'Create Account'}
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Creating account...
+                </div>
+              ) : (
+                'Create Account'
+              )}
             </button>
 
             {/* Login Link */}

@@ -85,14 +85,14 @@ export function LayoutHeader() {
   const firstName = profileData.name?.split(' ')[0] || 'User';
 
   return (
-    <div className="flex h-20 items-center justify-end gap-2 border-b px-4">
+    <div className="flex h-20 items-center justify-end gap-2 border-b border-slate-200/60 bg-white/50 backdrop-blur-sm px-6">
       {/* User Profile Dropdown */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button 
               variant="outline" 
-              className="flex items-center gap-2 px-3 py-2 h-10 hover:bg-gray-50"
+              className="flex items-center gap-2 px-4 py-2 h-10 hover:bg-slate-50 border-slate-200 transition-all duration-200 hover:border-slate-300"
             >
               <User className="w-4 h-4" />
               <span className="font-medium">{firstName}</span>
@@ -117,7 +117,7 @@ export function LayoutHeader() {
         </DropdownMenu>
         
         {/* Custom Avatar with Profile Image or First Letter */}
-        <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold text-sm shadow-lg overflow-hidden">
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm shadow-lg overflow-hidden border-2 border-white">
           {profileData.profileImage ? (
             <img 
               src={profileData.profileImage} 

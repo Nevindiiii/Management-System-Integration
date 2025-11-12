@@ -1,5 +1,14 @@
 import * as React from 'react';
-import { Users, BarChart2, Zap, Package, TrendingUp, Activity, User, Eye, Clock, Plus } from 'lucide-react';
+import { Users, BarChart2, Zap, Package, TrendingUp, Activity, User, Eye, Clock, Plus, LucideIcon } from 'lucide-react';
+
+interface ActivityItem {
+  type: string;
+  title: string;
+  time: string;
+  icon: LucideIcon;
+  color: string;
+  bgColor: string;
+}
 import { useNavigate } from 'react-router';
 import { useUsers } from '@/hooks/useUserQueries';
 import { useProducts } from '@/hooks/useProductQueries';
@@ -36,7 +45,7 @@ export default function AdminDashboard() {
 
   // Recent activity data
   const recentActivity = React.useMemo(() => {
-    const activities = [];
+    const activities: ActivityItem[] = [];
     
     // Add recent users
     combinedUsers.slice(0, 3).forEach((user: any) => {
@@ -68,14 +77,14 @@ export default function AdminDashboard() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
+    <div className="min-h-screen  mt-[-60px] bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 p-6 animate-fade-in">
       {/* Header Section */}
       <div className="flex items-start justify-between mb-8">
-        <div>
-          <h1 className="text-4xl font-bold bg-black bg-clip-text text-transparent">
-            Admin Dashboard
+        <div className="animate-slide-up">
+          <h1 className="text-4xl font-bold text-black ">
+            Dashboard
           </h1>
-          <p className="text-slate-600 mt-2 text-lg">Welcome back! Here's what's happening with your data</p>
+          <p className="text-slate-600 mt-2 text-lg font-medium">Welcome back! Here's your business overview</p>
         </div>
         <div className="flex gap-3">
           <Button 
@@ -98,70 +107,78 @@ export default function AdminDashboard() {
 
       {/* Horizontal Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-slate-600 text-sm font-medium">Total Users</p>
-              <p className="text-3xl font-bold text-slate-800 mt-1">
-                {usersLoading ? '...' : combinedUsers.length}
+              <p className="text-slate-600 text-sm font-medium mb-1">Total Users</p>
+              <p className="text-3xl font-bold text-slate-800 mb-2">
+                {usersLoading ? (
+                  <div className="w-16 h-8 bg-slate-200 rounded animate-pulse"></div>
+                ) : (
+                  combinedUsers.length
+                )}
               </p>
-              <p className="text-green-600 text-sm mt-1 flex items-center">
+              <p className="text-emerald-600 text-sm flex items-center font-medium">
                 <TrendingUp className="w-3 h-3 mr-1" />
-                +12%
+                +12% from last month
               </p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
-              <Users className="w-5 h-5 text-white" />
+            <div className="p-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl group-hover:scale-110 transition-transform duration-200">
+              <Users className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-slate-600 text-sm font-medium">Products</p>
-              <p className="text-3xl font-bold text-slate-800 mt-1">
-                {productsLoading ? '...' : products.length}
+              <p className="text-slate-600 text-sm font-medium mb-1">Products</p>
+              <p className="text-3xl font-bold text-slate-800 mb-2">
+                {productsLoading ? (
+                  <div className="w-16 h-8 bg-slate-200 rounded animate-pulse"></div>
+                ) : (
+                  products.length
+                )}
               </p>
-              <p className="text-green-600 text-sm mt-1 flex items-center">
-                <TrendingUp className="w-3 h-3 mr-1" />
-                API Data
+              <p className="text-emerald-600 text-sm flex items-center font-medium">
+                <Package className="w-3 h-3 mr-1" />
+                Live from API
               </p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-lg">
-              <Package className="w-5 h-5 text-white" />
+            <div className="p-4 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl group-hover:scale-110 transition-transform duration-200">
+              <Package className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-slate-600 text-sm font-medium">Active Sessions</p>
-              <p className="text-3xl font-bold text-slate-800 mt-1">24</p>
-              <p className="text-blue-600 text-sm mt-1 flex items-center">
-                <Activity className="w-3 h-3 mr-1" />
-                Live
+              <p className="text-slate-600 text-sm font-medium mb-1">Active Sessions</p>
+              <p className="text-3xl font-bold text-slate-800 mb-2">24</p>
+              <p className="text-blue-600 text-sm flex items-center font-medium">
+                <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 animate-pulse"></div>
+                Live now
               </p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg">
-              <Activity className="w-5 h-5 text-white" />
+            <div className="p-4 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl group-hover:scale-110 transition-transform duration-200">
+              <Activity className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-slate-600 text-sm font-medium">Performance</p>
-              <p className="text-3xl font-bold text-slate-800 mt-1">98.5%</p>
-              <p className="text-green-600 text-sm mt-1 flex items-center">
+              <p className="text-slate-600 text-sm font-medium mb-1">Performance</p>
+              <p className="text-3xl font-bold text-slate-800 mb-2">98.5%</p>
+              <p className="text-emerald-600 text-sm flex items-center font-medium">
                 <TrendingUp className="w-3 h-3 mr-1" />
-                Excellent
+                Excellent status
               </p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg">
-              <BarChart2 className="w-5 h-5 text-white" />
+            <div className="p-4 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl group-hover:scale-110 transition-transform duration-200">
+              <BarChart2 className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
@@ -170,25 +187,29 @@ export default function AdminDashboard() {
       {/* Main Content Grid - Left: Activity Chart, Right: Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column - Activity Chart */}
-        <div className="lg:col-span-2 bg-white rounded-xl shadow-lg p-6">
-          <div className="flex items-center justify-between mb-4">
+        <div className="lg:col-span-2 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 animate-slide-up">
+          <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold text-slate-800 flex items-center">
-              <Activity className="w-5 h-5 mr-2 text-purple-600" />
-              Product Activity Analysis
+              <div className="p-2 bg-purple-100 rounded-lg mr-3">
+                <Activity className="w-5 h-5 text-purple-600" />
+              </div>
+              Product Analytics
             </h3>
-            <p className="text-sm text-slate-500">Interactive price distribution</p>
+            <p className="text-sm text-slate-500 font-medium">Price distribution overview</p>
           </div>
           <ActivityChart cartData={products} />
         </div>
 
         {/* Right Column - Recent Activity */}
-        <div className="lg:col-span-1 bg-white rounded-xl shadow-lg p-6">
-          <div className="flex items-center justify-between mb-4">
+        <div className="lg:col-span-1 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 animate-slide-up">
+          <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold text-slate-800 flex items-center">
-              <Clock className="w-5 h-5 mr-2 text-purple-600" />
+              <div className="p-2 bg-blue-100 rounded-lg mr-3">
+                <Clock className="w-5 h-5 text-blue-600" />
+              </div>
               Recent Activity
             </h3>
-            <p className="text-sm text-slate-500">Latest updates</p>
+            <p className="text-sm text-slate-500 font-medium">Live updates</p>
           </div>
           <div className="space-y-4 max-h-96 overflow-y-auto">
             {recentActivity.length > 0 ? (

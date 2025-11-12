@@ -130,8 +130,10 @@ export function AppSidebar() {
       <SidebarContent className="bg-black text-white">
         <SidebarHeader className="p-4">
           <div className="flex items-center justify-center">
-            <div className="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">
-              <div className="w-4 h-4 bg-white rounded-sm"></div>
+            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-5 h-5 bg-black rounded-lg flex items-center justify-center">
+                <div className="w-2.5 h-2.5 bg-white rounded-sm"></div>
+              </div>
             </div>
           </div>
         </SidebarHeader>
@@ -154,16 +156,16 @@ export function AppSidebar() {
                         }
                       }}
                       className={`
-                        w-12 h-12 flex items-center justify-center rounded-lg transition-all duration-200
-                        hover:bg-white hover:text-black
+                        w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-300 group
+                        hover:bg-white hover:scale-105
                         ${isActive 
-                          ? 'bg-teal-600 text-white' 
-                          : 'text-white'
+                          ? 'bg-white text-black shadow-lg' 
+                          : 'text-white hover:text-black'
                         }
                       `}
                       tooltip={item.title}
                     >
-                      <Icon className="w-6 h-6" />
+                      <Icon className={`w-5 h-5 transition-transform duration-200 ${isActive ? '' : 'group-hover:scale-110'}`} />
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )
@@ -176,10 +178,10 @@ export function AppSidebar() {
         <SidebarFooter className="p-4">
           <SidebarMenuButton 
             onClick={() => setIsProfileEditOpen(true)}
-            className="w-12 h-12 flex items-center justify-center rounded-lg transition-all duration-200 hover:bg-white hover:text-black text-white cursor-pointer"
+            className="w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-300 hover:bg-white hover:scale-105 text-white hover:text-black cursor-pointer group"
             tooltip={userProfile.name || 'Edit Profile'}
           >
-            <div className="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center overflow-hidden">
+            <div className="w-8 h-8 bg-gray-700 rounded-xl flex items-center justify-center overflow-hidden border-2 border-gray-600 group-hover:border-black">
               {userProfile.profileImage ? (
                 <img 
                   src={userProfile.profileImage} 
@@ -187,7 +189,7 @@ export function AppSidebar() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <User className="w-5 h-5" />
+                <User className="w-4 h-4 text-gray-300 group-hover:text-black" />
               )}
             </div>
           </SidebarMenuButton>
