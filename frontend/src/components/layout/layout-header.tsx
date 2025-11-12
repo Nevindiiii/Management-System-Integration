@@ -25,9 +25,7 @@ export function LayoutHeader() {
   const firstName = user?.name?.split(' ')[0] || 'User';
 
   return (
-    <div className="flex h-20 items-center justify-between gap-2 border-b px-4">
-      <div className="text-lg font-semibold">API Integration Task</div>
-
+    <div className="flex h-20 items-center justify-end gap-2 border-b px-4">
       {/* User Profile Dropdown */}
       <div className="flex items-center gap-3">
         <DropdownMenu>
