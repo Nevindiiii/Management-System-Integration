@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, AlertCircle, User } from 'lucide-react';
+import { Mail, Lock, AlertCircle, User, Eye, EyeOff, LogIn } from 'lucide-react';
 import { z } from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -45,6 +45,7 @@ function loging({ onLogin }: LogingProps) {
   
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -110,42 +111,40 @@ function loging({ onLogin }: LogingProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center p-6 animate-fade-in">
+    <div className="min-h-screen bg-black flex items-center justify-center p-6 animate-fade-in">
       <div className="w-[500px]">
         {/* Login Form Card */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 p-8 animate-slide-up">
+        <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 p-6 animate-slide-up">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                <div className="w-4 h-4 bg-blue-500 rounded-sm"></div>
-              </div>
+            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/30">
+              <LogIn className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-            <p className="text-gray-600 text-sm">Sign in to your account to continue</p>
+            <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
+            <p className="text-gray-300 text-sm">Sign in to your account to continue</p>
           </div>
 
           {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name Input */}
             <div className="relative">
-              <div className={`flex items-center bg-white/50 rounded-xl px-4 py-4 border transition-all duration-200 ${
+              <div className={`flex items-center bg-white/10 rounded-xl px-4 py-4 border transition-all duration-200 ${
                 errors.name 
-                  ? 'border-red-300 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100 bg-red-50/50' 
-                  : 'border-gray-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 hover:border-gray-300'
+                  ? 'border-red-400 focus-within:border-red-400 focus-within:ring-2 focus-within:ring-red-400/20 bg-red-500/10' 
+                  : 'border-white/30 focus-within:border-white/50 focus-within:ring-2 focus-within:ring-white/20 hover:border-white/40'
               }`}>
-                <User className="w-5 h-5 text-gray-400 mr-3" />
+                <User className="w-5 h-5 text-white/70 mr-3" />
                 <input
                   type="text"
                   name="name"
                   placeholder="Name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="flex-1 bg-transparent outline-none text-gray-700 placeholder-gray-400"
+                  className="flex-1 bg-transparent outline-none text-white placeholder-gray-400"
                 />
               </div>
               {errors.name && (
-                <div className="flex items-center mt-1 text-red-500 text-sm">
+                <div className="flex items-center mt-1 text-red-400 text-sm">
                   <AlertCircle className="w-4 h-4 mr-1" />
                   {errors.name}
                 </div>
@@ -154,23 +153,23 @@ function loging({ onLogin }: LogingProps) {
             
             {/* Email Input */}
             <div className="relative">
-              <div className={`flex items-center bg-white/50 rounded-xl px-4 py-4 border transition-all duration-200 ${
+              <div className={`flex items-center bg-white/10 rounded-xl px-4 py-4 border transition-all duration-200 ${
                 errors.email 
-                  ? 'border-red-300 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100 bg-red-50/50' 
-                  : 'border-gray-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 hover:border-gray-300'
+                  ? 'border-red-400 focus-within:border-red-400 focus-within:ring-2 focus-within:ring-red-400/20 bg-red-500/10' 
+                  : 'border-white/30 focus-within:border-white/50 focus-within:ring-2 focus-within:ring-white/20 hover:border-white/40'
               }`}>
-                <Mail className="w-5 h-5 text-gray-400 mr-3" />
+                <Mail className="w-5 h-5 text-white/70 mr-3" />
                 <input
                   type="email"
                   name="email"
                   placeholder="Email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="flex-1 bg-transparent outline-none text-gray-700 placeholder-gray-400"
+                  className="flex-1 bg-transparent outline-none text-white placeholder-gray-400"
                 />
               </div>
               {errors.email && (
-                <div className="flex items-center mt-1 text-red-500 text-sm">
+                <div className="flex items-center mt-1 text-red-400 text-sm">
                   <AlertCircle className="w-4 h-4 mr-1" />
                   {errors.email}
                 </div>
@@ -179,23 +178,30 @@ function loging({ onLogin }: LogingProps) {
 
             {/* Password Input */}
             <div className="relative">
-              <div className={`flex items-center bg-white/50 rounded-xl px-4 py-4 border transition-all duration-200 ${
+              <div className={`flex items-center bg-white/10 rounded-xl px-4 py-4 border transition-all duration-200 ${
                 errors.password 
-                  ? 'border-red-300 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100 bg-red-50/50' 
-                  : 'border-gray-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 hover:border-gray-300'
+                  ? 'border-red-400 focus-within:border-red-400 focus-within:ring-2 focus-within:ring-red-400/20 bg-red-500/10' 
+                  : 'border-white/30 focus-within:border-white/50 focus-within:ring-2 focus-within:ring-white/20 hover:border-white/40'
               }`}>
-                <Lock className="w-5 h-5 text-gray-400 mr-3" />
+                <Lock className="w-5 h-5 text-white/70 mr-3" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   placeholder="Password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="flex-1 bg-transparent outline-none text-gray-700 placeholder-gray-400"
+                  className="flex-1 bg-transparent outline-none text-white placeholder-gray-400"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-white/70 hover:text-white transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
               {errors.password && (
-                <div className="flex items-center mt-1 text-red-500 text-sm">
+                <div className="flex items-center mt-1 text-red-400 text-sm">
                   <AlertCircle className="w-4 h-4 mr-1" />
                   {errors.password}
                 </div>
@@ -206,7 +212,7 @@ function loging({ onLogin }: LogingProps) {
             <div className="text-left">
               <button 
                 type="button"
-                className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors"
+                className="text-white hover:text-gray-300 text-sm font-medium transition-colors"
               >
                 Forgot password?
               </button>
@@ -216,7 +222,7 @@ function loging({ onLogin }: LogingProps) {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-4 rounded-xl hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="w-full bg-white text-black font-semibold py-4 rounded-xl hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-white/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
@@ -230,11 +236,11 @@ function loging({ onLogin }: LogingProps) {
 
             {/* Register Link */}
             <div className="text-center pt-4">
-              <span className="text-gray-600 text-sm">Don't have an account? </span>
+              <span className="text-gray-300 text-sm">Don't have an account? </span>
               <button
                 type="button"
                 onClick={() => navigate('/signup')}
-                className="text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors"
+                className="text-white hover:text-gray-300 font-medium text-sm transition-colors"
               >
                 Sign Up
               </button>

@@ -66,13 +66,26 @@ export function ProfileEditModal({ isOpen, onClose, profileData, onSave }: Profi
                 <Camera className="w-4 h-4" />
               </button>
             </div>
-            <input
+            {/* <input
               ref={fileInputRef}
               type="file"
               accept="image/*"
               onChange={handleImageChange}
               className="hidden"
-            />
+            /> */}
+
+            <label htmlFor="profileImage" className="sr-only">
+  Upload Profile Image
+</label>
+<input
+  id="profileImage"
+  ref={fileInputRef}
+  type="file"
+  accept="image/*"
+  onChange={handleImageChange}
+  className="hidden"
+/>
+
           </div>
 
           {/* User Information */}
