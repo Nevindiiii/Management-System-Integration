@@ -157,7 +157,7 @@ export function UserProfileModal({ isOpen, onClose }: UserProfileModalProps) {
             <Button variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button onClick={saveProfile} className="bg-teal-600 hover:bg-teal-700">
+            <Button onClick={saveProfile} className="bg-red-800 hover:bg-red-900">
               Save Changes
             </Button>
           </div>

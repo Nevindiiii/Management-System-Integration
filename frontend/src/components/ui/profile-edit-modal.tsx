@@ -58,8 +58,10 @@ export function ProfileEditModal({ isOpen, onClose, profileData, onSave }: Profi
                 )}
               </div>
               <button
+                type="button"
                 onClick={() => fileInputRef.current?.click()}
                 className="absolute -bottom-1 -right-1 w-8 h-8 bg-teal-600 rounded-full flex items-center justify-center text-white hover:bg-teal-700 transition-colors"
+                title="Change profile picture"
               >
                 <Camera className="w-4 h-4" />
               </button>
@@ -112,7 +114,7 @@ export function ProfileEditModal({ isOpen, onClose, profileData, onSave }: Profi
             </button>
             <button 
               onClick={handleSave}
-              className="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors flex items-center space-x-2"
+              className="px-6 py-2bg-red-800 hover:bg-red-900 text-white rounded-lg transition-colors flex items-center space-x-2"
             >
               <Save className="w-4 h-4" />
               <span>Save</span>

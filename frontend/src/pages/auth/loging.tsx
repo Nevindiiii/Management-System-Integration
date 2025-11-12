@@ -111,7 +111,7 @@ function loging({ onLogin }: LogingProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center p-6 animate-fade-in">
-      <div className="w-full max-w-md">
+      <div className="w-[500px]">
         {/* Login Form Card */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 p-8 animate-slide-up">
           {/* Header */}
