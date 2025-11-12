@@ -111,6 +111,9 @@ export function AppSidebar() {
         const encryptedData = encryptData(JSON.stringify(updatedProfile))
         localStorage.setItem('userProfile', encryptedData)
         
+        // Dispatch custom event for real-time sync
+        window.dispatchEvent(new Event('profileUpdated'))
+        
         setUserProfile(prev => ({
           ...prev,
           phone: updatedData.phone,
@@ -124,7 +127,7 @@ export function AppSidebar() {
   
   return (
     <Sidebar className="border-r-0" collapsible="icon">
-      <SidebarContent className="bg-slate-900 text-white">
+      <SidebarContent className="bg-black text-white">
         <SidebarHeader className="p-4">
           <div className="flex items-center justify-center">
             <div className="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">
@@ -136,7 +139,7 @@ export function AppSidebar() {
         {/* Navigation Menu */}
         <SidebarGroup className="flex-1 p-0">
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-2 px-2 py-4">
+            <SidebarMenu className="space-y-3 px-3 py-6">
               {items.map((item) => {
                 const isActive = item.url === '#' ? false : 
                   (item.url === '/' ? location.pathname === '/' : location.pathname.startsWith(item.url))
@@ -151,16 +154,16 @@ export function AppSidebar() {
                         }
                       }}
                       className={`
-                        w-full flex items-center justify-center p-3 rounded-lg transition-all duration-200
-                        hover:bg-slate-700 
+                        w-12 h-12 flex items-center justify-center rounded-lg transition-all duration-200
+                        hover:bg-white hover:text-black
                         ${isActive 
                           ? 'bg-teal-600 text-white' 
-                          : 'text-slate-400 hover:text-white'
+                          : 'text-white'
                         }
                       `}
                       tooltip={item.title}
                     >
-                      <Icon className="w-5 h-5" />
+                      <Icon className="w-6 h-6" />
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )
@@ -170,13 +173,13 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* Footer with user profile - View Only */}
-        <SidebarFooter className="p-3">
+        <SidebarFooter className="p-4">
           <SidebarMenuButton 
             onClick={() => setIsProfileEditOpen(true)}
-            className="w-full flex items-center justify-center p-3 rounded-lg transition-all duration-200 hover:bg-slate-700 text-slate-400 hover:text-white cursor-pointer"
+            className="w-12 h-12 flex items-center justify-center rounded-lg transition-all duration-200 hover:bg-white hover:text-black text-white cursor-pointer"
             tooltip={userProfile.name || 'Edit Profile'}
           >
-            <div className="w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center overflow-hidden">
+            <div className="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center overflow-hidden">
               {userProfile.profileImage ? (
                 <img 
                   src={userProfile.profileImage} 
@@ -184,7 +187,7 @@ export function AppSidebar() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <User className="w-4 h-4" />
+                <User className="w-5 h-5" />
               )}
             </div>
           </SidebarMenuButton>
