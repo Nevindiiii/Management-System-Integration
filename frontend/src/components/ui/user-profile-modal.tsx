@@ -69,6 +69,10 @@ export function UserProfileModal({ isOpen, onClose }: UserProfileModalProps) {
       }
       const encryptedData = encryptData(JSON.stringify(dataToSave))
       localStorage.setItem('userProfile', encryptedData)
+      
+      // Dispatch custom event to notify other components
+      window.dispatchEvent(new Event('profileUpdated'))
+      
       onClose()
     } catch (error) {
       console.error('Error saving profile data:', error)

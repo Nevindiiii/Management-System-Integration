@@ -2,6 +2,7 @@ import { Button } from '../ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { LogOut, User, ChevronDown } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,9 +12,68 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+// Simple decryption function
+const decryptData = (encryptedData: string): string => {
+  try {
+    return atob(encryptedData)
+  } catch {
+    return ''
+  }
+}
+
 export function LayoutHeader() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const [profileData, setProfileData] = useState<{name: string, email: string, profileImage: string | null}>({ 
+    name: '', 
+    email: '', 
+    profileImage: null 
+  });
+
+  // Load profile data from localStorage
+  useEffect(() => {
+    const loadProfile = () => {
+      const savedData = localStorage.getItem('userProfile')
+      if (savedData) {
+        try {
+          const decryptedData = decryptData(savedData)
+          const parsedData = JSON.parse(decryptedData)
+          setProfileData({
+            name: parsedData.userInfo?.name || user?.name || 'User',
+            email: parsedData.userInfo?.email || user?.email || 'user@example.com',
+            profileImage: parsedData.profileImage || null
+          })
+        } catch (error) {
+          console.error('Error loading profile:', error)
+          setProfileData({
+            name: user?.name || 'User',
+            email: user?.email || 'user@example.com',
+            profileImage: null
+          })
+        }
+      } else {
+        setProfileData({
+          name: user?.name || 'User',
+          email: user?.email || 'user@example.com',
+          profileImage: null
+        })
+      }
+    }
+    
+    loadProfile()
+    
+    // Listen for profile updates
+    const handleStorageChange = () => loadProfile()
+    const handleProfileUpdate = () => loadProfile()
+    
+    window.addEventListener('storage', handleStorageChange)
+    window.addEventListener('profileUpdated', handleProfileUpdate)
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+      window.removeEventListener('profileUpdated', handleProfileUpdate)
+    }
+  }, [user])
 
   const handleLogout = () => {
     console.log('Logging out...');
@@ -22,7 +82,7 @@ export function LayoutHeader() {
     navigate('/');
   };
 
-  const firstName = user?.name?.split(' ')[0] || 'User';
+  const firstName = profileData.name?.split(' ')[0] || 'User';
 
   return (
     <div className="flex h-20 items-center justify-end gap-2 border-b px-4">
@@ -42,9 +102,9 @@ export function LayoutHeader() {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">{user?.name || 'User'}</p>
+                <p className="text-sm font-medium leading-none">{profileData.name || 'User'}</p>
                 <p className="text-xs leading-none text-muted-foreground">
-                  {user?.email || 'user@example.com'}
+                  {profileData.email || 'user@example.com'}
                 </p>
               </div>
             </DropdownMenuLabel>
@@ -56,9 +116,17 @@ export function LayoutHeader() {
           </DropdownMenuContent>
         </DropdownMenu>
         
-        {/* Custom Avatar with First Letter */}
-        <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold text-sm shadow-lg">
-          {firstName.charAt(0).toUpperCase()}
+        {/* Custom Avatar with Profile Image or First Letter */}
+        <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold text-sm shadow-lg overflow-hidden">
+          {profileData.profileImage ? (
+            <img 
+              src={profileData.profileImage} 
+              alt="Profile" 
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            firstName.charAt(0).toUpperCase()
+          )}
         </div>
       </div>
     </div>

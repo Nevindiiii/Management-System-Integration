@@ -14,7 +14,7 @@ import {
   SidebarFooter,
   
 } from "@/components/ui/sidebar"
-import { UserProfileModal } from "@/components/ui/user-profile-modal"
+import { ProfileEditModal } from "@/components/ui/profile-edit-modal"
 
 const items = [
   {
@@ -34,7 +34,15 @@ const items = [
   },
 ]
 
-// Simple decryption function
+// Simple encryption/decryption functions
+const encryptData = (data: string): string => {
+  try {
+    return btoa(data)
+  } catch {
+    return ''
+  }
+}
+
 const decryptData = (encryptedData: string): string => {
   try {
     return atob(encryptedData)
@@ -46,8 +54,13 @@ const decryptData = (encryptedData: string): string => {
 export function AppSidebar() {
   const navigate = useNavigate()
   const location = useLocation()
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
-  const [userProfile, setUserProfile] = useState<{name: string, profileImage: string | null}>({ name: '', profileImage: null })
+  const [isProfileEditOpen, setIsProfileEditOpen] = useState(false)
+  const [userProfile, setUserProfile] = useState<{name: string, email: string, phone: string, profileImage: string | null}>({ 
+    name: '', 
+    email: '', 
+    phone: '', 
+    profileImage: null 
+  })
 
   // Load user profile data
   useEffect(() => {
@@ -59,6 +72,8 @@ export function AppSidebar() {
           const parsedData = JSON.parse(decryptedData)
           setUserProfile({
             name: parsedData.userInfo?.name || '',
+            email: parsedData.userInfo?.email || '',
+            phone: parsedData.userInfo?.phone || '',
             profileImage: parsedData.profileImage || null
           })
         } catch (error) {
@@ -74,7 +89,38 @@ export function AppSidebar() {
     window.addEventListener('storage', handleStorageChange)
     
     return () => window.removeEventListener('storage', handleStorageChange)
-  }, [isProfileModalOpen])
+  }, [])
+
+  // Handle profile save
+  const handleProfileSave = (updatedData: { phone: string; profileImage: string | null }) => {
+    const currentData = localStorage.getItem('userProfile')
+    if (currentData) {
+      try {
+        const decryptedData = decryptData(currentData)
+        const parsedData = JSON.parse(decryptedData)
+        
+        const updatedProfile = {
+          ...parsedData,
+          userInfo: {
+            ...parsedData.userInfo,
+            phone: updatedData.phone
+          },
+          profileImage: updatedData.profileImage
+        }
+        
+        const encryptedData = encryptData(JSON.stringify(updatedProfile))
+        localStorage.setItem('userProfile', encryptedData)
+        
+        setUserProfile(prev => ({
+          ...prev,
+          phone: updatedData.phone,
+          profileImage: updatedData.profileImage
+        }))
+      } catch (error) {
+        console.error('Error saving profile:', error)
+      }
+    }
+  }
   
   return (
     <Sidebar className="border-r-0" collapsible="icon">
@@ -123,12 +169,12 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Footer with user profile */}
+        {/* Footer with user profile - View Only */}
         <SidebarFooter className="p-3">
           <SidebarMenuButton 
-            onClick={() => setIsProfileModalOpen(true)}
+            onClick={() => setIsProfileEditOpen(true)}
             className="w-full flex items-center justify-center p-3 rounded-lg transition-all duration-200 hover:bg-slate-700 text-slate-400 hover:text-white cursor-pointer"
-            tooltip={userProfile.name || 'User Profile'}
+            tooltip={userProfile.name || 'Edit Profile'}
           >
             <div className="w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center overflow-hidden">
               {userProfile.profileImage ? (
@@ -145,10 +191,12 @@ export function AppSidebar() {
         </SidebarFooter>
       </SidebarContent>
       
-      {/* User Profile Modal */}
-      <UserProfileModal 
-        isOpen={isProfileModalOpen} 
-        onClose={() => setIsProfileModalOpen(false)} 
+      {/* Profile Edit Modal */}
+      <ProfileEditModal 
+        isOpen={isProfileEditOpen} 
+        onClose={() => setIsProfileEditOpen(false)}
+        profileData={userProfile}
+        onSave={handleProfileSave}
       />
     </Sidebar>
   )

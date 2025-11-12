@@ -106,6 +106,22 @@ function signup({ onRegister }: SignupProps) {
       });
       
       if (result.success) {
+        // Save user data to localStorage for profile initialization
+        try {
+          const profileData = {
+            userInfo: {
+              name: formData.name,
+              email: formData.email,
+              phone: ''
+            },
+            profileImage: null
+          }
+          const encryptedData = btoa(JSON.stringify(profileData))
+          localStorage.setItem('userProfile', encryptedData)
+        } catch (error) {
+          console.error('Error saving initial profile data:', error)
+        }
+        
         // Show success message
         toast.success('Account created successfully! Please login with your credentials.');
         
