@@ -1,5 +1,6 @@
 import { BarChart3, Users, Package, User } from "lucide-react"
 import { useNavigate, useLocation } from 'react-router'
+import { useState } from 'react'
 
 import {
   Sidebar,
@@ -13,6 +14,7 @@ import {
   SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { UserProfileModal } from "@/components/ui/user-profile-modal"
 
 const items = [
   {
@@ -33,9 +35,9 @@ const items = [
 ]
 
 export function AppSidebar() {
- 
   const navigate = useNavigate()
   const location = useLocation()
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
   
   return (
     <Sidebar className="border-r-0" collapsible="icon">
@@ -86,13 +88,22 @@ export function AppSidebar() {
 
         {/* Footer with user profile */}
         <SidebarFooter className="p-3">
-          <SidebarMenuButton className="w-full flex items-center justify-center p-3 rounded-lg transition-all duration-200 hover:bg-slate-700 text-slate-400 hover:text-white">
+          <SidebarMenuButton 
+            onClick={() => setIsProfileModalOpen(true)}
+            className="w-full flex items-center justify-center p-3 rounded-lg transition-all duration-200 hover:bg-slate-700 text-slate-400 hover:text-white cursor-pointer"
+          >
             <div className="w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center">
               <User className="w-4 h-4" />
             </div>
           </SidebarMenuButton>
         </SidebarFooter>
       </SidebarContent>
+      
+      {/* User Profile Modal */}
+      <UserProfileModal 
+        isOpen={isProfileModalOpen} 
+        onClose={() => setIsProfileModalOpen(false)} 
+      />
     </Sidebar>
   )
 }
