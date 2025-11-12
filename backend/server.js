@@ -11,8 +11,14 @@ app.use(express.json());
 
 // Connect MongoDB
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch(err => console.log(err));
+  .then(() => {
+    console.log("MongoDB Connected to:", process.env.MONGO_URI);
+    console.log("Database:", mongoose.connection.db.databaseName);
+  })
+  .catch(err => {
+    console.error("MongoDB Connection Error:", err);
+    console.log("Make sure MongoDB is running and connection string is correct:", process.env.MONGO_URI);
+  });
 
 // Routes
 app.use("/api/users", userRoutes);

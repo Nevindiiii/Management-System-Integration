@@ -128,6 +128,36 @@ class AuthService {
     this.removeToken();
   }
 
+  // Get user data from token
+  getUserFromToken(): { id: string; name: string; email: string } | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      // Parse fake JWT token
+      const parts = token.split('.');
+      if (parts.length !== 3) return null;
+
+      const payload = JSON.parse(atob(parts[1]));
+      
+      // Check if token is expired
+      if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
+        this.removeToken();
+        return null;
+      }
+
+      return {
+        id: payload.sub || Date.now().toString(),
+        name: payload.name || 'User',
+        email: payload.email || 'unknown@example.com',
+      };
+    } catch (error) {
+      console.error('Error parsing token:', error);
+      this.removeToken();
+      return null;
+    }
+  }
+
   // Create fake JWT token for demo purposes
   private createFakeToken(user: { name: string; email: string; password?: string }): string {
     const header = {

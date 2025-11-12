@@ -1,0 +1,3 @@
+@echo off
+echo Starting MongoDB Backend Server...
+npm start
