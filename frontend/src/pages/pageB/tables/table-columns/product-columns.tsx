@@ -22,6 +22,8 @@ function ProductActionsCell({ product }: { product: Product }) {
           size="sm"
           onClick={() => setShowDialog(true)}
           className="h-8 w-8 p-0"
+          aria-label="View product details"
+          title="View product details"
         >
           <Eye className="h-4 w-4" />
         </Button>

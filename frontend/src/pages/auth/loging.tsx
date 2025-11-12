@@ -88,7 +88,7 @@ function loging({ onLogin }: LogingProps) {
         await onLogin(formData);
       }
       
-      // Use JWT authentication
+      //  JWT authentication
       await login({
         name: formData.name,
         email: formData.email,

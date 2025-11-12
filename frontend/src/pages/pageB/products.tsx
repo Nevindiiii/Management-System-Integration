@@ -34,11 +34,15 @@ export default function UsersTable({ data }: Props) {
     (id: string) => {
       if (!table) return undefined;
       try {
-        if (typeof table.getColumn === 'function') return table.getColumn(id);
-        if (table.table && typeof table.table.getColumn === 'function')
-          return table.table.getColumn(id);
+        if (typeof table.getColumn === 'function') {
+          const column = table.getColumn(id);
+          return column || undefined;
+        }
+        if (table.table && typeof table.table.getColumn === 'function') {
+          const column = table.table.getColumn(id);
+          return column || undefined;
+        }
       } catch (error) {
-        console.warn(`Column with id '${id}' does not exist`);
         return undefined;
       }
       return undefined;
@@ -53,15 +57,10 @@ export default function UsersTable({ data }: Props) {
     return currentColumns.map((col: any) => {
       const id = col.id ?? col.accessorKey;
       const label = typeof col.header === 'string' ? col.header : id;
-      try {
-        const column = getColumn(id);
-        const isVisible = column?.getIsVisible?.() ?? true;
-        return { id, label, isVisible };
-      } catch (error) {
-        return { id, label: typeof col.header === 'string' ? col.header : id, isVisible: true };
-      }
+      const column = getColumn(id);
+      const isVisible = column?.getIsVisible?.() ?? true;
+      return { id, label, isVisible };
     });
-    // include `table` because visibility is read from it when available
   }, [columns, productColumns, table, getColumn, productsData]);
 
   const handleToggleColumn = React.useCallback(
@@ -95,21 +94,13 @@ export default function UsersTable({ data }: Props) {
           placeholder={productsData ? "Filter products..." : "Filter names..."}
           value={(() => {
             if (!table) return '';
-            try {
-              const filterColumn = getColumn(productsData ? 'title' : 'firstName');
-              return (filterColumn?.getFilterValue() as string) ?? '';
-            } catch (error) {
-              return '';
-            }
+            const filterColumn = getColumn(productsData ? 'title' : 'firstName');
+            return (filterColumn?.getFilterValue() as string) ?? '';
           })()}
           onChange={(event) => {
             if (table) {
-              try {
-                const filterColumn = getColumn(productsData ? 'title' : 'firstName');
-                filterColumn?.setFilterValue?.(event.target.value);
-              } catch (error) {
-                console.warn('Could not set filter value');
-              }
+              const filterColumn = getColumn(productsData ? 'title' : 'firstName');
+              filterColumn?.setFilterValue?.(event.target.value);
             }
           }}
           className="max-w-sm"

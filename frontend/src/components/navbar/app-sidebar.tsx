@@ -1,4 +1,4 @@
-import { BarChart3,  UserPlus,  ChevronLeft, Menu, Package } from "lucide-react"
+import { BarChart3, Users, Package, User } from "lucide-react"
 import { useNavigate, useLocation } from 'react-router'
 
 import {
@@ -14,7 +14,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
-// Menu items to match the image
 const items = [
   {
     title: "Dashboard",
@@ -22,31 +21,28 @@ const items = [
     icon: BarChart3,
   },
   {
-    title: "Users Data",
+    title: "Users",
     url: "/users",
-    icon: UserPlus,
+    icon: Users,
   },
   {
-    title: "Products Data", 
+    title: "Products",
     url: "/products",
     icon: Package,
   },
-  
 ]
 
 export function AppSidebar() {
-  const { state, toggleSidebar } = useSidebar()
+ 
   const navigate = useNavigate()
   const location = useLocation()
-  const isCollapsed = state === "collapsed"
-
+  
   return (
     <Sidebar className="border-r-0" collapsible="icon">
-      <SidebarContent className="bg-slate-800 text-white">
-        {/* Header with blue accent */}
-        <SidebarHeader className="border-b border-slate-700 p-4">
+      <SidebarContent className="bg-slate-900 text-white">
+        <SidebarHeader className="p-4">
           <div className="flex items-center justify-center">
-            <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
+            <div className="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">
               <div className="w-4 h-4 bg-white rounded-sm"></div>
             </div>
           </div>
@@ -55,7 +51,7 @@ export function AppSidebar() {
         {/* Navigation Menu */}
         <SidebarGroup className="flex-1 p-0">
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1 px-3 py-4">
+            <SidebarMenu className="space-y-2 px-2 py-4">
               {items.map((item) => {
                 const isActive = item.url === '#' ? false : 
                   (item.url === '/' ? location.pathname === '/' : location.pathname.startsWith(item.url))
@@ -70,20 +66,16 @@ export function AppSidebar() {
                         }
                       }}
                       className={`
-                        w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200
+                        w-full flex items-center justify-center p-3 rounded-lg transition-all duration-200
                         hover:bg-slate-700 
                         ${isActive 
-                          ? 'bg-blue-600 text-white shadow-lg' 
-                          : 'text-slate-300 hover:text-white'
+                          ? 'bg-teal-600 text-white' 
+                          : 'text-slate-400 hover:text-white'
                         }
-                        ${isCollapsed ? 'justify-center px-2' : 'justify-start'}
                       `}
-                      tooltip={isCollapsed ? item.title : undefined}
+                      tooltip={item.title}
                     >
-                      <Icon className="w-5 h-5 shrink-0" />
-                      {!isCollapsed && (
-                        <span className="font-medium text-sm">{item.title}</span>
-                      )}
+                      <Icon className="w-5 h-5" />
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )
@@ -92,20 +84,12 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Footer with collapse button */}
-        <SidebarFooter className="border-t border-slate-700 p-3">
-          <SidebarMenuButton
-            onClick={toggleSidebar}
-            className="w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 hover:bg-slate-700 text-slate-300 hover:text-white"
-          >
-            {isCollapsed ? (
-              <Menu className="w-5 h-5" />
-            ) : (
-              <>
-                <ChevronLeft className="w-5 h-5" />
-                <span className="font-medium text-sm">Collapse Sidebar</span>
-              </>
-            )}
+        {/* Footer with user profile */}
+        <SidebarFooter className="p-3">
+          <SidebarMenuButton className="w-full flex items-center justify-center p-3 rounded-lg transition-all duration-200 hover:bg-slate-700 text-slate-400 hover:text-white">
+            <div className="w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center">
+              <User className="w-4 h-4" />
+            </div>
           </SidebarMenuButton>
         </SidebarFooter>
       </SidebarContent>

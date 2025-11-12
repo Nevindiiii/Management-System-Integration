@@ -1,15 +1,13 @@
 import * as React from 'react';
-import { Users, BarChart2, Zap, Package, TrendingUp, Activity, User, Eye } from 'lucide-react';
+import { Users, BarChart2, Zap, Package, TrendingUp, Activity, User, Eye, Clock, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { useUsers } from '@/hooks/useUserQueries';
 import { useProducts } from '@/hooks/useProductQueries';
 import { usePostStore } from '@/store/postStore';
 import { Button } from '@/components/ui/button';
+import { ActivityChart } from '@/pages/admin/ActivityChart';
 
 
-// Chart imports
-import 'chart.js/auto';
-import { Bar, Doughnut } from 'react-chartjs-2';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -17,7 +15,7 @@ export default function AdminDashboard() {
   const { data: products = [] } = useProducts();
   const newPosts = usePostStore((s) => s.newPosts);
 
-  // Combine persisted newly-added users (from local store) with fetched users,
+  
   // placing newly-added users first and avoiding duplicates by id.
   const combinedUsers = React.useMemo(() => {
     if (!users) return newPosts ?? [];
@@ -26,140 +24,41 @@ export default function AdminDashboard() {
     return [...(newPosts || []), ...others];
   }, [users, newPosts]);
 
-  // Chart data generation helpers
 
-  // Products by category chart data
-  const productCategoryData = React.useMemo(() => {
-    if (!products || products.length === 0) {
-      // Fallback data when no products loaded
-      return {
-        labels: ['Electronics', 'Clothing', 'Home & Garden', 'Sports', 'Books', 'Other'],
-        datasets: [
-          {
-            data: [25, 20, 15, 12, 10, 8],
-            backgroundColor: [
-              'rgba(59,130,246,0.8)',
-              'rgba(16,185,129,0.8)', 
-              'rgba(245,158,11,0.8)',
-              'rgba(239,68,68,0.8)',
-              'rgba(139,92,246,0.8)',
-              'rgba(156,163,175,0.8)',
-            ],
-            borderWidth: 0,
-          },
-        ],
-      };
-    }
 
-    // Group products by category
-    const categoryCount = products.reduce((acc: any, product: any) => {
-      const category = product.category || 'Other';
-      acc[category] = (acc[category] || 0) + 1;
-      return acc;
-    }, {});
 
-    const categories = Object.keys(categoryCount);
-    const counts = Object.values(categoryCount);
-    const colors = [
-      'rgba(59,130,246,0.8)', 'rgba(16,185,129,0.8)', 'rgba(245,158,11,0.8)',
-      'rgba(239,68,68,0.8)', 'rgba(139,92,246,0.8)', 'rgba(156,163,175,0.8)',
-      'rgba(236,72,153,0.8)', 'rgba(14,165,233,0.8)'
-    ];
-
-    return {
-      labels: categories,
-      datasets: [
-        {
-          data: counts,
-          backgroundColor: colors.slice(0, categories.length),
-          borderWidth: 0,
-        },
-      ],
-    };
-  }, [products]);
-
-  // Product price ranges chart data
-  const productPriceData = React.useMemo(() => {
-    if (!products || products.length === 0) {
-      return {
-        labels: ['$0-50', '$50-100', '$100-200', '$200-500', '$500+'],
-        datasets: [
-          {
-            label: 'Products Count',
-            data: [15, 25, 30, 20, 10],
-            backgroundColor: 'rgba(16,185,129,0.8)',
-            borderColor: 'rgba(16,185,129,1)',
-            borderWidth: 1,
-          },
-        ],
-      };
-    }
-
-    const priceRanges = {
-      '$0-50': 0,
-      '$50-100': 0, 
-      '$100-200': 0,
-      '$200-500': 0,
-      '$500+': 0,
-    };
-
-    products.forEach((product: any) => {
-      const price = product.price || 0;
-      if (price <= 50) priceRanges['$0-50']++;
-      else if (price <= 100) priceRanges['$50-100']++;
-      else if (price <= 200) priceRanges['$100-200']++;
-      else if (price <= 500) priceRanges['$200-500']++;
-      else priceRanges['$500+']++;
+  // Recent activity data
+  const recentActivity = React.useMemo(() => {
+    const activities = [];
+    
+    // Add recent users
+    combinedUsers.slice(0, 3).forEach((user: any) => {
+      activities.push({
+        type: 'user',
+        title: `New user registered: ${user.name || user.email || 'Unknown'}`,
+        time: '2 hours ago',
+        icon: User,
+        color: 'text-blue-600',
+        bgColor: 'bg-blue-100'
+      });
     });
+    
+    // Add recent products
+    products.slice(0, 2).forEach((product: any) => {
+      activities.push({
+        type: 'product',
+        title: `Product added: ${product.name || 'New Product'}`,
+        time: '4 hours ago',
+        icon: Package,
+        color: 'text-green-600',
+        bgColor: 'bg-green-100'
+      });
+    });
+    
+    return activities.slice(0, 5);
+  }, [combinedUsers, products]);
 
-    return {
-      labels: Object.keys(priceRanges),
-      datasets: [
-        {
-          label: 'Products Count',
-          data: Object.values(priceRanges),
-          backgroundColor: 'rgba(16,185,129,0.8)',
-          borderColor: 'rgba(16,185,129,1)',
-          borderWidth: 1,
-        },
-      ],
-    };
-  }, [products]);
 
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-      },
-    },
-    scales: {
-      x: {
-        grid: {
-          display: false,
-        },
-      },
-      y: {
-        beginAtZero: true,
-        grid: {
-          color: 'rgba(15,23,42,0.04)',
-        },
-      },
-    },
-  };
-
-  const doughnutOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'bottom' as const,
-        labels: {
-          padding: 20,
-          usePointStyle: true,
-        },
-      },
-    },
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
@@ -259,151 +158,54 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Analytics Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white rounded-xl shadow-lg p-6">
+      {/* Recent Activity */}
+      <div className="grid grid-cols-1 gap-6 mb-8">
+        <div className="bg-white rounded-xl shadow-lg p-6 max-w-2xl w-full mx-auto">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold text-slate-800 flex items-center">
-              <Package className="w-5 h-5 mr-2 text-green-600" />
-              Product Categories
+              <Clock className="w-5 h-5 mr-2 text-purple-600" />
+              Recent Activity
             </h3>
-            <p className="text-sm text-slate-500">Distribution</p>
+            <p className="text-sm text-slate-500">Latest updates</p>
           </div>
-          <div className="h-64">
-            <Doughnut data={productCategoryData} options={doughnutOptions} />
-          </div>
-        </div>
-        <div className="bg-white rounded-xl shadow-lg p-6 max-w-2xl w-full mx-auto ">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-semibold text-slate-800 flex items-center">
-              <BarChart2 className="w-5 h-5 mr-2 text-green-600" />
-              Product Price Ranges
-            </h3>
-            <p className="text-sm text-slate-500">Price distribution</p>
-          </div>
-          <div className="h-64">
-            <Bar data={productPriceData} options={chartOptions} />
-          </div>
-        </div>
-      </div>
-
-      
-
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <div className="lg:col-span-3">
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h3 className="text-xl font-semibold text-slate-800 mb-4 flex items-center">
-              <Zap className="w-5 h-5 mr-2 text-yellow-500" />
-              Quick Actions
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Button 
-                variant="outline" 
-                onClick={() => navigate('/')}
-                className="h-16 flex-col gap-2 hover:bg-blue-50 hover:border-blue-300 transition-all duration-200"
-              >
-                <Package className="w-5 h-5 text-blue-600" />
-                <span>Manage Products</span>
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => navigate('/newly-added')}
-                className="h-16 flex-col gap-2 hover:bg-green-50 hover:border-green-300 transition-all duration-200"
-              >
-                <Users className="w-5 h-5 text-green-600" />
-                <span>Manage Users</span>
-              </Button>
-              <Button 
-                variant="outline" 
-                className="h-16 flex-col gap-2 hover:bg-purple-50 hover:border-purple-300 transition-all duration-200"
-              >
-                <BarChart2 className="w-5 h-5 text-purple-600" />
-                <span>View Analytics</span>
-              </Button>
-              <Button 
-                variant="outline" 
-                className="h-16 flex-col gap-2 hover:bg-orange-50 hover:border-orange-300 transition-all duration-200"
-              >
-                <Activity className="w-5 h-5 text-orange-600" />
-                <span>System Status</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl shadow-lg p-6 text-white">
-          <h3 className="text-xl font-semibold mb-4">System Health</h3>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-blue-100">Server Status</span>
-              <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium">Online</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-blue-100">Database</span>
-              <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium">Healthy</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-blue-100">API Response</span>
-              <span className="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-medium">125ms</span>
-            </div>
-          </div>
-        </div> */}
-      </div>
-
-      
-
-      {/* Recent Users */}
-      <div className="bg-white rounded-xl shadow-lg">
-        <div className="p-6 border-b border-slate-200">
-          <h2 className="text-xl font-semibold text-slate-800 flex items-center">
-            <Users className="w-5 h-5 mr-2 text-blue-600" />
-            Recent Users
-          </h2>
-          <p className="text-slate-600 mt-1">Latest registered users in your system</p>
-        </div>
-        <div className="p-6">
-          {isLoading ? (
-            <div className="space-y-4">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="flex items-center gap-4 animate-pulse">
-                  <div className="h-12 w-12 rounded-full bg-slate-200"></div>
-                  <div className="flex-1">
-                    <div className="h-4 bg-slate-200 rounded w-1/3 mb-2"></div>
-                    <div className="h-3 bg-slate-200 rounded w-1/2"></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {(combinedUsers || []).slice(0, 6).map((u: any, index) => (
-                <div key={u.id} className="flex items-center gap-4 p-4 rounded-lg hover:bg-slate-50 transition-colors duration-200">
-                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold shadow-lg">
-                    {((u.firstName || '').charAt(0) + (u.lastName || '').charAt(0)).toUpperCase()}
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-semibold text-slate-800">{u.firstName} {u.lastName}</div>
-                    <div className="text-slate-600 text-sm">{u.email}</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm font-medium text-slate-800">ID: {u.id}</div>
-                    <div className="text-xs text-slate-500">
-                      {index < 2 ? 'New' : 'Active'}
+          <div className="space-y-4">
+            {recentActivity.length > 0 ? (
+              recentActivity.map((activity, index) => {
+                const IconComponent = activity.icon;
+                return (
+                  <div key={index} className="flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className={`p-2 rounded-full ${activity.bgColor}`}>
+                      <IconComponent className={`w-4 h-4 ${activity.color}`} />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-800">{activity.title}</p>
+                      <p className="text-xs text-gray-500">{activity.time}</p>
                     </div>
                   </div>
-                </div>
-              ))}
-              {(!users || users.length === 0) && (
-                <div className="text-center py-8 text-slate-500">
-                  <Users className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                  <p>No users available</p>
-                </div>
-              )}
-            </div>
-          )}
+                );
+              })
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p>No recent activity</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Activity Chart */}
+      <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-semibold text-slate-800 flex items-center">
+            <Activity className="w-5 h-5 mr-2 text-purple-600" />
+            Product Activity Analysis
+          </h3>
+          <p className="text-sm text-slate-500">Interactive price distribution</p>
+        </div>
+        <ActivityChart cartData={products} />
+      </div>
+
     </div>
   );
 }

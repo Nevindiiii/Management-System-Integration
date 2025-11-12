@@ -23,7 +23,7 @@ export interface RegisterCredentials {
   confirmPassword: string;
 }
 
-// Simulate API calls - replace with actual backend endpoints
+// replace with actual backend endpoints
 class AuthService {
   // Store token in localStorage
   setToken(token: string): void {
@@ -158,7 +158,7 @@ class AuthService {
     }
   }
 
-  // Create fake JWT token for demo purposes
+  // Create fake JWT 
   private createFakeToken(user: { name: string; email: string; password?: string }): string {
     const header = {
       alg: 'HS256',

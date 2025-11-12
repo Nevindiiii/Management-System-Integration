@@ -21,7 +21,7 @@ console.log('🔍 Secret API URL:', API_BASE_URL);
 // Product API functions
 export async function fetchProducts(): Promise<Product[]> {
   try {
-    const res = await axios.get(API_BASE_URL);
+    const res = await axios.get(`${API_BASE_URL}/products`);
     const products: Product[] = res.data.products.map((product: any) => ({
       id: product.id,
       title: product.title || 'N/A',
@@ -41,7 +41,7 @@ export async function fetchProducts(): Promise<Product[]> {
 
 export async function fetchProductById(id: number): Promise<Product | null> {
   try {
-    const res = await axios.get(`${API_BASE_URL}/${id}`);
+    const res = await axios.get(`${API_BASE_URL}/products/${id}`);
     return {
       id: res.data.id,
       title: res.data.title || 'N/A',

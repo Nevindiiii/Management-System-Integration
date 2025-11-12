@@ -97,7 +97,7 @@ function signup({ onRegister }: SignupProps) {
         await onRegister(formData);
       }
       
-      // Use JWT authentication for registration
+      //  JWT authentication for registration
       const result = await register({
         name: formData.name,
         email: formData.email,
