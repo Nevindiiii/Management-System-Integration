@@ -1,0 +1,16 @@
+MongoDB Compass Connection Details
+=====================================
+
+Connection String:
+mongodb+srv://tharindus_db_user:5365505@cluster0.c2uyurb.mongodb.net/DummyJson?retryWrites=true&w=majority&appName=Cluster0
+
+Database Name: DummyJson
+Collections: users
+
+Steps to Connect:
+1. Open MongoDB Compass
+2. Click "New Connection" 
+3. Paste the connection string above
+4. Click "Connect"
+
+Note: This is the same connection your backend server uses.

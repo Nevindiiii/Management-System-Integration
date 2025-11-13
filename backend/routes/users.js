@@ -7,23 +7,26 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const users = await User.find().sort({ createdAt: -1 });
+    
+    const formattedUsers = users.map(user => ({
+      id: user._id,
+      firstName: user.name ? user.name.split(' ')[0] : '',
+      lastName: user.name ? user.name.split(' ').slice(1).join(' ') : '',
+      age: 25, // Default age since not in MongoDB
+      email: user.email,
+      phone: user.phone || '',
+      birthDate: null // Not available in current data
+    }));
+    
     res.json({
       success: true,
-      users: users.map(user => ({
-        id: user.id, // Use custom id field
-        firstName: user.firstName,
-        lastName: user.lastName,
-        age: user.age,
-        email: user.email,
-        phone: user.phone,
-        birthDate: user.birthDate.toISOString().split('T')[0] // Format as YYYY-MM-DD
-      }))
+      users: formattedUsers
     });
   } catch (error) {
     console.error('Error fetching users:', error);
     res.status(500).json({
       success: false,
-      message: 'Unable to load users. Please check your connection and try again.',
+      message: 'Unable to load users.',
       error: error.message
     });
   }
@@ -32,38 +35,28 @@ router.get('/', async (req, res) => {
 // GET user by ID
 router.get('/:id', async (req, res) => {
   try {
-    const userId = parseInt(req.params.id); // Convert to number
-    
-    if (isNaN(userId)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide a valid user ID (number)'
-      });
-    }
-    
-    const user = await User.findOne({ id: userId }); // Find by custom id field
+    const user = await User.findById(req.params.id);
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: `User with ID ${userId} not found. Please check the ID and try again.`
+        message: 'User not found'
       });
     }
     
     res.json({
       success: true,
-      id: user.id, // Use custom id field
-      firstName: user.firstName,
-      lastName: user.lastName,
-      age: user.age,
+      id: user._id,
+      firstName: user.name ? user.name.split(' ')[0] : '',
+      lastName: user.name ? user.name.split(' ').slice(1).join(' ') : '',
+      age: 25,
       email: user.email,
-      phone: user.phone,
-      birthDate: user.birthDate.toISOString().split('T')[0]
+      phone: user.phone || '',
+      birthDate: null
     });
   } catch (error) {
-    console.error('Error fetching user:', error);
     res.status(500).json({
       success: false,
-      message: 'Unable to load user details. Please try again later.',
+      message: 'Unable to load user details.',
       error: error.message
     });
   }
@@ -72,110 +65,46 @@ router.get('/:id', async (req, res) => {
 // POST create new user
 router.post('/add', async (req, res) => {
   try {
-    const { id, firstName, lastName, age, email, phone, birthDate } = req.body;
+    const { firstName, lastName, email, phone, gender, department } = req.body;
     
-    console.log('Create user request received:');
-    console.log('Request body:', req.body);
-    console.log('Extracted data:', { id, firstName, lastName, age, email, phone, birthDate });
-    
-    // Validate required fields
-    const missingFields = [];
-    if (!id) missingFields.push('ID');
-    if (!firstName) missingFields.push('First Name');
-    if (!lastName) missingFields.push('Last Name');
-    if (!age) missingFields.push('Age');
-    if (!email) missingFields.push('Email');
-    if (!phone) missingFields.push('Phone');
-    if (!birthDate) missingFields.push('Birth Date');
-    
-    if (missingFields.length > 0) {
-      console.log('Missing required fields:', {
-        id: !id ? 'missing' : 'present',
-        firstName: !firstName ? 'missing' : 'present',
-        lastName: !lastName ? 'missing' : 'present',
-        age: !age ? 'missing' : 'present',
-        email: !email ? 'missing' : 'present',
-        phone: !phone ? 'missing' : 'present',
-        birthDate: !birthDate ? 'missing' : 'present'
-      });
+    if (!firstName || !email) {
       return res.status(400).json({
         success: false,
-        message: `Please fill in all required fields: ${missingFields.join(', ')}`,
-        missingFields: missingFields,
-        required: ['id', 'firstName', 'lastName', 'age', 'email', 'phone', 'birthDate']
+        message: 'Name and email are required'
       });
     }
     
-    // Create new user
     const newUser = new User({
-      id, // Include the custom id field
-      firstName,
-      lastName,
-      age,
+      name: `${firstName} ${lastName || ''}`.trim(),
       email,
-      phone,
-      birthDate: new Date(birthDate)
+      phone: phone || '',
+      gender: gender || 'Male',
+      department: department || 'IT'
     });
     
-    console.log('Attempting to save user to database...');
     const savedUser = await newUser.save();
-    console.log('User saved successfully:', savedUser.firstName, savedUser.lastName);
     
     res.status(201).json({
       success: true,
       message: 'User created successfully',
-      id: savedUser.id, // Use custom id field
-      firstName: savedUser.firstName,
-      lastName: savedUser.lastName,
-      age: savedUser.age,
+      id: savedUser._id,
+      firstName: savedUser.name.split(' ')[0],
+      lastName: savedUser.name.split(' ').slice(1).join(' '),
+      age: 25,
       email: savedUser.email,
       phone: savedUser.phone,
-      birthDate: savedUser.birthDate.toISOString().split('T')[0]
+      birthDate: null
     });
   } catch (error) {
-    console.error('Error creating user:', error);
     if (error.code === 11000) {
-      // Duplicate error (could be email or id)
-      const field = Object.keys(error.keyPattern)[0];
-      const duplicateValue = Object.values(error.keyValue)[0];
-      console.log('Duplicate field error:', field, 'Value:', duplicateValue);
-      
-      let message;
-      if (field === 'id') {
-        message = `ID ${duplicateValue} is already in use. Please choose a different ID.`;
-      } else if (field === 'email') {
-        message = `Email ${duplicateValue} is already registered. Please use a different email address.`;
-      } else {
-        message = `${field} already exists. Please use a different value.`;
-      }
-      
       res.status(400).json({
         success: false,
-        message: message,
-        error: `Duplicate ${field}`,
-        field: field,
-        value: duplicateValue
-      });
-    } else if (error.name === 'ValidationError') {
-      // Validation error
-      const errors = Object.values(error.errors).map(err => err.message);
-      const detailedErrors = Object.keys(error.errors).reduce((acc, field) => {
-        acc[field] = error.errors[field].message;
-        return acc;
-      }, {});
-      
-      console.log('Validation errors:', errors);
-      res.status(400).json({
-        success: false,
-        message: 'Please check your input and fix the validation errors',
-        errors: errors,
-        detailedErrors: detailedErrors
+        message: 'Email already exists'
       });
     } else {
-      console.log('General error:', error.message);
       res.status(500).json({
         success: false,
-        message: 'Unable to create user. Please try again later.',
+        message: 'Unable to create user',
         error: error.message
       });
     }
@@ -185,109 +114,48 @@ router.post('/add', async (req, res) => {
 // PUT update user
 router.put('/:id', async (req, res) => {
   try {
-    const paramId = parseInt(req.params.id); // Convert URL param to number
-    const { id, firstName, lastName, age, email, phone, birthDate } = req.body;
+    const { firstName, lastName, email, phone, gender, department } = req.body;
     
-    console.log('Update request - URL ID:', paramId, 'Body ID:', id);
-    console.log('Update data:', { firstName, lastName, age, email, phone, birthDate });
-    
-    if (isNaN(paramId)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide a valid user ID for updating'
-      });
-    }
-    
-    // Validate required fields for update
-    const missingFields = [];
-    if (!firstName) missingFields.push('First Name');
-    if (!lastName) missingFields.push('Last Name');
-    if (!age) missingFields.push('Age');
-    if (!email) missingFields.push('Email');
-    if (!phone) missingFields.push('Phone');
-    if (!birthDate) missingFields.push('Birth Date');
-    
-    if (missingFields.length > 0) {
-      return res.status(400).json({
-        success: false,
-        message: `Please fill in all required fields: ${missingFields.join(', ')}`,
-        missingFields: missingFields
-      });
-    }
-    
-    const updatedUser = await User.findOneAndUpdate(
-      { id: paramId }, // Find by URL parameter ID
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
       {
-        id: id || paramId, // Update the custom id field if provided, otherwise keep existing
-        firstName,
-        lastName,
-        age,
+        name: `${firstName} ${lastName || ''}`.trim(),
         email,
-        phone,
-        birthDate: new Date(birthDate)
+        phone: phone || '',
+        gender: gender || 'Male',
+        department: department || 'IT'
       },
       { new: true, runValidators: true }
     );
     
     if (!updatedUser) {
-      console.log('User not found with ID:', paramId);
       return res.status(404).json({
         success: false,
         message: 'User not found'
       });
     }
     
-    console.log('User updated successfully:', updatedUser.firstName, updatedUser.lastName);
     res.json({
       success: true,
       message: 'User updated successfully',
-      id: updatedUser.id, // Use custom id field
-      firstName: updatedUser.firstName,
-      lastName: updatedUser.lastName,
-      age: updatedUser.age,
+      id: updatedUser._id,
+      firstName: updatedUser.name.split(' ')[0],
+      lastName: updatedUser.name.split(' ').slice(1).join(' '),
+      age: 25,
       email: updatedUser.email,
       phone: updatedUser.phone,
-      birthDate: updatedUser.birthDate.toISOString().split('T')[0]
+      birthDate: null
     });
   } catch (error) {
-    console.error('Error updating user:', error);
     if (error.code === 11000) {
-      const field = Object.keys(error.keyPattern)[0];
-      const duplicateValue = Object.values(error.keyValue)[0];
-      
-      let message;
-      if (field === 'id') {
-        message = `ID ${duplicateValue} is already in use by another user. Please choose a different ID.`;
-      } else if (field === 'email') {
-        message = `Email ${duplicateValue} is already registered by another user. Please use a different email address.`;
-      } else {
-        message = `${field} already exists. Please use a different value.`;
-      }
-      
       res.status(400).json({
         success: false,
-        message: message,
-        error: `Duplicate ${field}`,
-        field: field,
-        value: duplicateValue
-      });
-    } else if (error.name === 'ValidationError') {
-      const errors = Object.values(error.errors).map(err => err.message);
-      const detailedErrors = Object.keys(error.errors).reduce((acc, field) => {
-        acc[field] = error.errors[field].message;
-        return acc;
-      }, {});
-      
-      res.status(400).json({
-        success: false,
-        message: 'Please check your input and fix the validation errors',
-        errors: errors,
-        detailedErrors: detailedErrors
+        message: 'Email already exists'
       });
     } else {
       res.status(500).json({
         success: false,
-        message: 'Unable to update user. Please try again later.',
+        message: 'Unable to update user',
         error: error.message
       });
     }
@@ -297,33 +165,23 @@ router.put('/:id', async (req, res) => {
 // DELETE user
 router.delete('/:id', async (req, res) => {
   try {
-    const userId = parseInt(req.params.id); // Convert to number
-    
-    if (isNaN(userId)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide a valid user ID for deletion'
-      });
-    }
-    
-    const deletedUser = await User.findOneAndDelete({ id: userId }); // Find by custom id field
+    const deletedUser = await User.findByIdAndDelete(req.params.id);
     
     if (!deletedUser) {
       return res.status(404).json({
         success: false,
-        message: `User with ID ${userId} not found. The user may have been already deleted.`
+        message: 'User not found'
       });
     }
     
     res.json({
       success: true,
-      message: `User ${deletedUser.firstName} ${deletedUser.lastName} has been deleted successfully`
+      message: `User ${deletedUser.name} has been deleted successfully`
     });
   } catch (error) {
-    console.error('Error deleting user:', error);
     res.status(500).json({
       success: false,
-      message: 'Unable to delete user. Please try again later.',
+      message: 'Unable to delete user',
       error: error.message
     });
   }

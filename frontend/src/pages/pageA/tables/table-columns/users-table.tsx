@@ -22,16 +22,18 @@ export default function UsersTable({ data, onTableChange }: Props) {
         'email': 200,
         'phone': 140,
         'birthDate': 120,
+        'age': 80,
         'actions': 120
       }}
       columnHeaders={{
-        'firstName': 'firstName',
-        'lastName': 'lastName',
-        'email': 'email',
-        'phone': 'phone',
-        'birthDate': 'birthDate',
-        'age': 'age',
-        'actions': 'actions'
+        'id': 'ID',
+        'firstName': 'First Name',
+        'lastName': 'Last Name',
+        'email': 'Email',
+        'phone': 'Phone',
+        'birthDate': 'Birth Date',
+        'age': 'Age',
+        'actions': 'Actions'
       }}
       // Visual customization props
       striped={true}

@@ -66,13 +66,7 @@ export function ProfileEditModal({ isOpen, onClose, profileData, onSave }: Profi
                 <Camera className="w-4 h-4" />
               </button>
             </div>
-            {/* <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="hidden"
-            /> */}
+           
 
             <label htmlFor="profileImage" className="sr-only">
   Upload Profile Image
@@ -127,7 +121,7 @@ export function ProfileEditModal({ isOpen, onClose, profileData, onSave }: Profi
             </button>
             <button 
               onClick={handleSave}
-              className="px-6 py-2bg-red-800 hover:bg-red-900 text-white rounded-lg transition-colors flex items-center space-x-2"
+              className="px-6 py-2 bg-red-800 hover:bg-red-900 text-white rounded-lg transition-colors flex items-center space-x-2"
             >
               <Save className="w-4 h-4" />
               <span>Save</span>

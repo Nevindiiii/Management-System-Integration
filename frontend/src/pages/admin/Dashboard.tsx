@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Users, BarChart2, Zap, Package, TrendingUp, Activity, User, Eye, Clock, Plus, LucideIcon } from 'lucide-react';
+import { Users, BarChart2,  Package, TrendingUp, Activity, User, Eye, Clock,  LucideIcon } from 'lucide-react';
 
 interface ActivityItem {
   type: string;
@@ -27,21 +27,18 @@ export default function AdminDashboard() {
   // Debug: Log products data
   React.useEffect(() => {
     if (products.length > 0) {
-      console.log('🛍️ Products from API:', products.length, products);
+      console.log('Products from API:', products.length, products);
     }
   }, [products]);
 
   
-  // placing newly-added users first and avoiding duplicates by id.
+  // added newly added users
   const combinedUsers = React.useMemo(() => {
     if (!users) return newPosts ?? [];
     const existingIds = new Set((newPosts || []).map((p) => p.id));
     const others = (users || []).filter((u: any) => !existingIds.has(u.id));
     return [...(newPosts || []), ...others];
   }, [users, newPosts]);
-
-
-
 
   // Recent activity data
   const recentActivity = React.useMemo(() => {
@@ -111,13 +108,13 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-600 text-sm font-medium mb-1">Total Users</p>
-              <p className="text-3xl font-bold text-slate-800 mb-2">
-                {usersLoading ? (
-                  <div className="w-16 h-8 bg-slate-200 rounded animate-pulse"></div>
-                ) : (
-                  combinedUsers.length
-                )}
-              </p>
+              {usersLoading ? (
+                <div className="w-16 h-8 bg-slate-200 rounded animate-pulse mb-2"></div>
+              ) : (
+                <p className="text-3xl font-bold text-slate-800 mb-2">
+                  {combinedUsers.length}
+                </p>
+              )}
               <p className="text-emerald-600 text-sm flex items-center font-medium">
                 <TrendingUp className="w-3 h-3 mr-1" />
                 +12% from last month
@@ -133,13 +130,13 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-600 text-sm font-medium mb-1">Products</p>
-              <p className="text-3xl font-bold text-slate-800 mb-2">
-                {productsLoading ? (
-                  <div className="w-16 h-8 bg-slate-200 rounded animate-pulse"></div>
-                ) : (
-                  products.length
-                )}
-              </p>
+              {productsLoading ? (
+                <div className="w-16 h-8 bg-slate-200 rounded animate-pulse mb-2"></div>
+              ) : (
+                <p className="text-3xl font-bold text-slate-800 mb-2">
+                  {products.length}
+                </p>
+              )}
               <p className="text-emerald-600 text-sm flex items-center font-medium">
                 <Package className="w-3 h-3 mr-1" />
                 Live from API
@@ -157,7 +154,7 @@ export default function AdminDashboard() {
               <p className="text-slate-600 text-sm font-medium mb-1">Active Sessions</p>
               <p className="text-3xl font-bold text-slate-800 mb-2">24</p>
               <p className="text-blue-600 text-sm flex items-center font-medium">
-                <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 animate-pulse"></div>
+                <span className="w-2 h-2 bg-blue-500 rounded-full mr-2 animate-pulse inline-block"></span>
                 Live now
               </p>
             </div>
