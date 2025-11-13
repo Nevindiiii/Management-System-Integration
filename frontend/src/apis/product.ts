@@ -12,17 +12,17 @@ export interface Product {
   description: string;
 }
 
-// Base API configuration from secret environment variables
+// Base API configuration -secret environment variables
 const API_BASE_URL = import.meta.env.VITE_SECRET_API_BASE_URL || 'https://dummyjson.com';
 
-// Debug: Secret URL එක console එකේ පේනවා!
-console.log('🔍 Secret API URL:', API_BASE_URL);
+// Debug: Secret URL -shown in console
+console.log(' Secret API URL:', API_BASE_URL);
 
 // Product API functions
 export async function fetchProducts(): Promise<Product[]> {
   try {
     const res = await axios.get(`${API_BASE_URL}/products?limit=0`);
-    console.log('🛍️ API Response:', res.data);
+    console.log(' API Response:', res.data);
     const products: Product[] = res.data.products.map((product: any) => ({
       id: product.id,
       title: product.title || 'N/A',
@@ -33,7 +33,7 @@ export async function fetchProducts(): Promise<Product[]> {
       stock: product.stock || 0,
       description: product.description || 'N/A',
     }));
-    console.log('🛍️ Processed products count:', products.length);
+    console.log('Processed products count:', products.length);
     return products;
   } catch (error) {
     console.error('Error fetching products:', error);

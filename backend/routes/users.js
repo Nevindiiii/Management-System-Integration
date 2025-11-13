@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
       age: 25, // Default age since not in MongoDB
       email: user.email,
       phone: user.phone || '',
-      birthDate: null // Not available in current data
+      birthDate: user.birthDate ? user.birthDate.toISOString().split('T')[0] : null
     }));
     
     res.json({
@@ -51,7 +51,7 @@ router.get('/:id', async (req, res) => {
       age: 25,
       email: user.email,
       phone: user.phone || '',
-      birthDate: null
+      birthDate: user.birthDate ? user.birthDate.toISOString().split('T')[0] : null
     });
   } catch (error) {
     res.status(500).json({
@@ -65,7 +65,7 @@ router.get('/:id', async (req, res) => {
 // POST create new user
 router.post('/add', async (req, res) => {
   try {
-    const { firstName, lastName, email, phone, gender, department } = req.body;
+    const { firstName, lastName, email, phone, gender, department, birthDate } = req.body;
     
     if (!firstName || !email) {
       return res.status(400).json({
@@ -79,7 +79,8 @@ router.post('/add', async (req, res) => {
       email,
       phone: phone || '',
       gender: gender || 'Male',
-      department: department || 'IT'
+      department: department || 'IT',
+      birthDate: birthDate ? new Date(birthDate) : null
     });
     
     const savedUser = await newUser.save();
@@ -93,7 +94,7 @@ router.post('/add', async (req, res) => {
       age: 25,
       email: savedUser.email,
       phone: savedUser.phone,
-      birthDate: null
+      birthDate: savedUser.birthDate ? savedUser.birthDate.toISOString().split('T')[0] : null
     });
   } catch (error) {
     if (error.code === 11000) {
@@ -114,7 +115,7 @@ router.post('/add', async (req, res) => {
 // PUT update user
 router.put('/:id', async (req, res) => {
   try {
-    const { firstName, lastName, email, phone, gender, department } = req.body;
+    const { firstName, lastName, email, phone, gender, department, birthDate } = req.body;
     
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
@@ -123,7 +124,8 @@ router.put('/:id', async (req, res) => {
         email,
         phone: phone || '',
         gender: gender || 'Male',
-        department: department || 'IT'
+        department: department || 'IT',
+        birthDate: birthDate ? new Date(birthDate) : null
       },
       { new: true, runValidators: true }
     );
@@ -144,7 +146,7 @@ router.put('/:id', async (req, res) => {
       age: 25,
       email: updatedUser.email,
       phone: updatedUser.phone,
-      birthDate: null
+      birthDate: updatedUser.birthDate ? updatedUser.birthDate.toISOString().split('T')[0] : null
     });
   } catch (error) {
     if (error.code === 11000) {

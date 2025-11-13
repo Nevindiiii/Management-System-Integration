@@ -201,6 +201,11 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: 'birthDate',
     header: 'Birth Date',
+    cell: ({ row }) => {
+      const birthDate = row.getValue('birthDate') as string;
+      if (!birthDate) return 'N/A';
+      return new Date(birthDate).toLocaleDateString();
+    },
   },
   {
     id: 'actions',

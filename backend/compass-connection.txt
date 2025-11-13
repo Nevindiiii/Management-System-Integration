@@ -4,7 +4,7 @@ MongoDB Compass Connection Details
 Connection String:
 mongodb+srv://tharindus_db_user:5365505@cluster0.c2uyurb.mongodb.net/DummyJson?retryWrites=true&w=majority&appName=Cluster0
 
-Database Name: DummyJson
+Database Name: myDB
 Collections: users
 
 Steps to Connect:

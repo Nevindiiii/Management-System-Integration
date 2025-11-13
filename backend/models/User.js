@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false,
     match: [/^(\+\d{1,3}[- ]?)?\(?\d{1,4}\)?[- ]?\d{1,4}[- ]?\d{1,9}$/, 'Please enter a valid phone number']
+  },
+  birthDate: {
+    type: Date,
+    required: false
   }
 }, {
   timestamps: true
