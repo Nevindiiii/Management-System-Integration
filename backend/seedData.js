@@ -7,22 +7,32 @@ dotenv.config();
 // Sample data matching your MongoDB Compass screenshot
 const sampleUsers = [
   {
-    id: 1,
-    firstName: "Nevindi",
-    lastName: "Sadeera Lokullyanage",
-    age: 25,
+    name: "Nevindi Sadeera Lokullyanage",
     email: "nevindi.sadeera@gmail.com",
     phone: "+94763862252",
-    birthDate: new Date("1979-09-17")
+    gender: "Female",
+    department: "IT"
   },
   {
-    id: 2,
-    firstName: "Dulran",
-    lastName: "Hinduwaara",
-    age: 28,
+    name: "Dulran Hinduwaara",
     email: "dulran.hinduwaara@gmail.com",
     phone: "+94763862252",
-    birthDate: new Date("2007-12-12")
+    gender: "Male",
+    department: "Engineering"
+  },
+  {
+    name: "John Doe",
+    email: "john.doe@example.com",
+    phone: "+94771234567",
+    gender: "Male",
+    department: "Marketing"
+  },
+  {
+    name: "Jane Smith",
+    email: "jane.smith@example.com",
+    phone: "+94779876543",
+    gender: "Female",
+    department: "HR"
   }
 ];
 

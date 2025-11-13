@@ -125,7 +125,7 @@ const FormControl = React.forwardRef<
       {...props}
     />
   );
-});
+})
 FormControl.displayName = 'FormControl';
 
 const FormDescription = React.forwardRef<
